@@ -32,6 +32,7 @@ const char* toggle[]   = {"ncmpcpp","toggle",NULL };
 const char* voldown[]  = {"amixer","set","PCM","5%-",NULL};
 const char* volup[]    = {"amixer","set","PCM","5%+",NULL};
 const char* brsrcmd[]  = {"google-chrome-beta",NULL};
+const char* filecmd[]  = {"pcmanfm",NULL};
 const char* hintcmd[]  = {"hints",NULL};
 const char* clipcmd[]  = {"clipmenu",NULL};
 
@@ -59,20 +60,19 @@ static struct key keys[] = {
     {  MOD1,             XK_F2,                      spawn,          {.com = volup}},
     {  MOD1,             XK_a,                       spawn,          {.com = dmenucmd}},
     {  MOD1,             XK_b,                       spawn,          {.com = brsrcmd}},
+    {  MOD1,             XK_e,                       spawn,          {.com = filecmd}},
     {  MOD1,   		 XK_t,                       spawn,          {.com = urxvtcmd}},
     {  MOD1,		 XK_v,			     spawn,	     {.com = clipcmd}},
     {  MOD1,		 XK_semicolon,		     spawn,	     {.com = hintcmd}},
-// Windows Key + shift + shortcut
+// Others
     {  MOD1|ShiftMask,   XK_j,                       move_up,        {NULL}},
     {  MOD1|ShiftMask,   XK_k,                       move_down,      {NULL}},
     {  MOD1,   		 XK_Return,                  focus_master,   {NULL}},
     {  MOD1|ShiftMask,   XK_Return,                  swap_master,    {NULL}},
-    {  MOD1|ShiftMask,   XK_f,                       toggle_fullscreen,{NULL}},
+    {  MOD1,   		 XK_f,                       toggle_fullscreen,{NULL}},
     {  MOD1|ShiftMask,   XK_v,                       switch_vertical,{NULL}},
     {  MOD1|ShiftMask,   XK_h,                       switch_horizontal,{NULL}},
-// Windows Key + shift + shortcut
-    // Quit normally 
-    {  MOD1|ShiftMask,   XK_Delete,                       catkill,        {NULL}},
+    {  MOD1|ShiftMask,   XK_Delete,                  catkill,        {NULL}},
 //    {  MOD1|ControlMask, XK_r,                       spawn,          {.com = rebootcmd}},
 //    {  MOD1|ControlMask, XK_s,                       spawn,          {.com = shutdowncmd}},
        DESKTOPCHANGE(   XK_1,                                       0)
