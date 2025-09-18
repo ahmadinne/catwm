@@ -16,6 +16,13 @@ I will try to stay under 1000 SLOC.
 
 Status
 ------
+* 18.09.25
+
+    -Added function focus_master, to focus into current master window.
+
+    -Added function auto_start, to autostart command inside the "/catwm/autostart.sh".
+
+
 * 17.06.15
 
    -Added -pedantic flag in config.mk.
@@ -209,3 +216,4 @@ Thanks
  * [moetunes](https://github.com/moetunes)
  * [c00kiemon5ter](https://github.com/c00kiemon5ter)
  * [pyknite](https://github.com/pyknite)
+ * [djmasde](https://github.com/djmasde)

@@ -5,33 +5,7 @@
  *  (        )            ... for cat!
  *  (         )
  *  (          ))))))________________ Cute And Tiny Window Manager
- *  ______________________________________________________________________________
  *
- *  Copyright (c) 2014-2015, Dj_Dexter, Helmuth.Schmelzer@gmail.com
- *  Copyright (c) 2010, Rinaldini Julien, julien.rinaldini@heig-vd.ch
- *  Based in moetunes fork
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *  Some changes and additions by P. Newman 24.4.11
- *     - best not to email julien if you use this... :)
- *  Some changes and bugfixes by Dj_Dexter/djmasde 21.7.14
- *  Bug with desktop numbers:
- *  -before, only show 3 desktops
- *  -after, show to 9 desktops, configured with config.h
- *  -removed the next_desktop, and prev_desktop functions
- *  Now, numlock on, not affects the keyboard shortcuts
- *  Unmapnotify function for rare windows, Ex: thunderbird, firefox, etc...
  */
 
 #include <X11/Xlib.h>
@@ -114,6 +88,8 @@ static void setup();
 static void sigchld(int unused);
 static void spawn(const Arg arg);
 static void start();
+static void auto_start();
+static void focus_master();
 static void swap_master();
 static void toggle_fullscreen();
 static void switch_vertical();
@@ -235,6 +211,17 @@ void unmapnotify(XEvent *e) { // for thunderbird's write window and maybe others
                update_current();
                return;
             }
+    }
+}
+
+void focus_master() {
+    client *c;
+
+    if(current != NULL && head != NULL) {
+		c = head;
+
+        current = c;
+        update_current();
     }
 }
 
@@ -725,6 +712,11 @@ void start() {
     while(running && !XNextEvent(dis, &ev)) if (events[ev.type]) events[ev.type](&ev);
 }
 
+void auto_start(void) {
+	system("cd ~/.config/catwm; ./autostart_blocking.sh");
+	system("cd ~/.config/catwm; ./autostart.sh &");
+}
+
 void wea() {
     //quick and dirty anti not focus
     decrease();
@@ -804,6 +796,7 @@ int main(int argc, char **argv) {
     // Setup env
     setup();
     // Start wm
+	auto_start();
     start();
     cleanup();
     //quick and dirty anti not focus
