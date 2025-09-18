@@ -18,10 +18,13 @@
 #define BORDER_WIDTH    2
 #define ATTACH_ASIDE    0 /* 0=TRUE, 1=New window is master */
 #define DEFAULT_MODE    2 /* 0 = Horizontal, 1 = Fullscreen, 2 = Vertical */
+#define SMART_BORDER	1 /* 0=TRUE, 1=FALSE */
+#define WINDOW_GAPS		10
 
 // Colors
-#define FOCUS           "#956671" // pinkish
-#define UNFOCUS         "#004050" // blueish
+#define FOCUS           "#1f1f28"
+#define UNFOCUS         "#f2ecbc"
+#define FULLSCREEN		"#c84053"
 
 const char* dmenucmd[] = {"rofi","-show","drun",NULL};
 const char* urxvtcmd[] = {"alacritty",NULL};

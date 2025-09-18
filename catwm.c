@@ -56,6 +56,8 @@ typedef struct desktop desktop;
 struct desktop{
     int master_size;
     int mode;
+	int smart;
+	int gaps;
     client *head;
     client *current;
 };
@@ -113,11 +115,14 @@ unsigned int numlockmask;		/* dynamic key lock mask */
 static int current_desktop;
 static int master_size;
 static int mode;
+static int smart;
+static int gaps;
 static int sh;
 static int sw;
 static int screen;
 static unsigned int win_focus;
 static unsigned int win_unfocus;
+static unsigned int win_fullscreen;
 static Window root;
 static client *head;
 static client *current;
@@ -218,9 +223,7 @@ void focus_master() {
     client *c;
 
     if(current != NULL && head != NULL) {
-		c = head;
-
-        current = c;
+        current = head;
         update_current();
     }
 }
@@ -385,9 +388,28 @@ void update_current() {
 
     for(c=head;c;c=c->next)
         if(current == c) {
+			// No Border if only one windows
+			if(smart == 0) {
+				if(head != NULL && head->next == NULL) {
+					XSetWindowBorderWidth(dis,c->win,0);
+				}
+				else if(head != NULL) {
+					XSetWindowBorderWidth(dis,c->win,BORDER_WIDTH);
+				}
+			}
+			else if(smart == 1) {
+					XSetWindowBorderWidth(dis,c->win,BORDER_WIDTH);
+			}
+
+			// Border color if fullscreen
+			if(mode != 1) {
+				XSetWindowBorder(dis,c->win,win_focus);
+			}
+			else {
+				XSetWindowBorder(dis,c->win,win_fullscreen);
+			}
+
             // "Enable" current window
-            XSetWindowBorderWidth(dis,c->win,BORDER_WIDTH);
-            XSetWindowBorder(dis,c->win,win_focus);
             XSetInputFocus(dis,c->win,RevertToParent,CurrentTime);
             XRaiseWindow(dis,c->win);
         }
@@ -446,7 +468,12 @@ void tile() {
 
     // If only one window
     if(head != NULL && head->next == NULL) {
-        XMoveResizeWindow(dis,head->win,0,0,sw-4,sh-4);
+		if(smart == 0) {
+			XMoveResizeWindow(dis,head->win,0,0,sw,sh);
+		}
+		else if(smart == 1) {
+			XMoveResizeWindow(dis,head->win,gaps,gaps,sw - BORDER_WIDTH - (2*WINDOW_GAPS), sh - BORDER_WIDTH - (2*WINDOW_GAPS));
+		}
     }
     else if(head != NULL) {
         switch(mode) {
@@ -468,12 +495,12 @@ void tile() {
                 break;
             case 2: /* Vertical */
                 // Master window
-                XMoveResizeWindow(dis,head->win,0,0,master_size - BORDER_WIDTH,sh - BORDER_WIDTH);
+                XMoveResizeWindow(dis,head->win,gaps,gaps,master_size - BORDER_WIDTH - (1.5*WINDOW_GAPS),sh - BORDER_WIDTH - (2*WINDOW_GAPS));
 
                 // Stack
                 for(c=head->next;c;c=c->next) ++n;
                 for(c=head->next;c;c=c->next) {
-                    XMoveResizeWindow(dis,c->win,master_size + BORDER_WIDTH,x,sw-master_size-(2*BORDER_WIDTH),(sh/n) - BORDER_WIDTH);
+					XMoveResizeWindow(dis,c->win,master_size + BORDER_WIDTH + (.5*WINDOW_GAPS),x + gaps,sw-master_size-(2*BORDER_WIDTH)-(1.5*WINDOW_GAPS),(sh/n) - BORDER_WIDTH - (2*WINDOW_GAPS));
                     x += sh/n;
                 }
                 break;
@@ -643,17 +670,23 @@ void setup() {
 
     // Screen width and height
     sw = XDisplayWidth(dis,screen) - BORDER_WIDTH;
-    sh = XDisplayHeight(dis,screen) - PANEL_HEIGHT - BORDER_WIDTH;
+    sh = XDisplayHeight(dis,screen) - BORDER_WIDTH;
+    // sh = XDisplayHeight(dis,screen) - PANEL_HEIGHT - BORDER_WIDTH;
+
+	// Gaps
+	gaps = WINDOW_GAPS;
 
     // Colors
     win_focus = getcolor(FOCUS);
     win_unfocus = getcolor(UNFOCUS);
+	win_fullscreen = getcolor(FULLSCREEN);
 
     // Shortcuts
     grabkeys();
 
-    // Default stack
+    // Others
     mode = DEFAULT_MODE;
+	smart = SMART_BORDER;
 
     // For exiting
 //    bool_quit = 0;
