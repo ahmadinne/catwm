@@ -16,6 +16,11 @@ I will try to stay under 1000 SLOC.
 
 Status
 ------
+* 19.09.25
+
+    -Added gaps for window (not perfect gaps, but atleast it works)
+
+
 * 18.09.25
 
     -Added function focus_master, to focus into current master window.
