@@ -401,15 +401,13 @@ void update_current() {
 					XSetWindowBorderWidth(dis,c->win,BORDER_WIDTH);
 			}
 
-			// Border color if fullscreen
-			if(mode != 1) {
-				XSetWindowBorder(dis,c->win,win_focus);
-			}
-			else {
-				XSetWindowBorder(dis,c->win,win_fullscreen);
+			// No Border in Fullscreen
+			if(mode == 1) {
+				XSetWindowBorderWidth(dis,c->win,0);
 			}
 
             // "Enable" current window
+			XSetWindowBorder(dis,c->win,win_focus);
             XSetInputFocus(dis,c->win,RevertToParent,CurrentTime);
             XRaiseWindow(dis,c->win);
         }
