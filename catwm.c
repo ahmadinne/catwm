@@ -468,11 +468,18 @@ void tile() {
 
     // If only one window
     if(head != NULL && head->next == NULL) {
-		if(smart == 0) {
-			XMoveResizeWindow(dis,head->win,0,0,sw,sh);
-		}
-		else if(smart == 1) {
-			XMoveResizeWindow(dis,head->win,gaps,gaps,sw - BORDER_WIDTH - (2*WINDOW_GAPS), sh - BORDER_WIDTH - (2*WINDOW_GAPS));
+		switch(mode) {
+			case 1: /* Fullscreen */
+				XMoveResizeWindow(dis,head->win,0,0,sw,sh);
+				break;
+			default:
+				if(smart == 0) {
+					XMoveResizeWindow(dis,head->win,0,0,sw,sh);
+				}
+				else if(smart == 1) {
+					XMoveResizeWindow(dis,head->win,gaps,gaps,sw - BORDER_WIDTH - (2*WINDOW_GAPS), sh - BORDER_WIDTH - (2*WINDOW_GAPS));
+				}
+				break;
 		}
     }
     else if(head != NULL) {
@@ -489,6 +496,7 @@ void tile() {
                 }
                 break;
             case 1: /* Fullscreen */
+				// Stack
                 for(c=head;c;c=c->next) {
                     XMoveResizeWindow(dis,c->win,0,0,sw,sh);
                 }
